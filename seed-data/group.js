@@ -1,0 +1,10 @@
+module.exports = [
+  {
+    id: 1,
+    name: "Group 1",
+  },
+  {
+    id: 2,
+    name: "Group 2",
+  },
+];

@@ -18,12 +18,7 @@ exports.up = function (knex) {
     .createTable("date", (table) => {
       table.increments("id").primary();
       table.date("date").notNullable();
-      table
-        .integer("user_id")
-        .unsigned()
-        .references("user.id")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
+      table.integer("user_id").unsigned().references("user.id");
     })
     .createTable("group", (table) => {
       table.increments("id").primary();
@@ -44,12 +39,7 @@ exports.up = function (knex) {
       table.string("location").notNullable();
       table.time("time").notNullable();
       table.date("date").notNullable();
-      table
-        .integer("group_id")
-        .unsigned()
-        .references("group.id")
-        .onUpdate("CASCADE")
-        .onDelete("CASCADE");
+      table.integer("group_id").unsigned().references("group.id");
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table
         .timestamp("updated_at")
@@ -57,5 +47,10 @@ exports.up = function (knex) {
     });
 };
 exports.down = function (knex) {
-  return knex.schema.dropTable("user");
+  return knex.schema
+    .dropTable("group_user")
+    .dropTable("event")
+    .dropTable("date")
+    .dropTable("group")
+    .dropTable("user");
 };
