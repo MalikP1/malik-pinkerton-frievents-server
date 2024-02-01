@@ -9,4 +9,6 @@ router
   .get(userController.getOneUser)
   .patch(userController.editUser);
 
+router.route("/:id/add").post(userController.createGroup);
+
 module.exports = router;

@@ -2,8 +2,25 @@ const knex = require("knex")(require("../knexfile"));
 
 const getUsers = async (req, res) => {
   try {
-    const data = await knex("user");
-    res.status(200).json(data);
+    const users = await knex("user");
+    const mappedUsers = await Promise.all(
+      users.map(async (user) => {
+        const groups = await knex("group_user")
+          .join("group", "group_user.group_id", "group.id")
+          .where({ user_id: user.id })
+          .select("group.id", "name");
+
+        user.groups = groups.map((object) => {
+          const newObj = {
+            id: object.id,
+            name: object.name,
+          };
+          return newObj;
+        });
+        return user;
+      })
+    );
+    res.status(200).json(mappedUsers);
   } catch (error) {
     res.status(404).send(`Error retrieving users: ${error}.`);
   }
@@ -15,7 +32,38 @@ const getOneUser = async (req, res) => {
     if (!user) {
       return res.status(404).send(`User with ID: ${req.params.id} not found`);
     }
-    res.status(200).json(user);
+    const groups = await knex("group_user")
+      .join("group", "group_user.group_id", "group.id")
+      .where({ "group_user.user_id": user.id })
+      .select("group.id", "name");
+
+    const mappedGroups = groups.map((object) => {
+      const groupObj = {
+        id: object.id,
+        name: object.name,
+      };
+      return groupObj;
+    });
+
+    const dates = await knex("user")
+      .join("date", "date.user_id", "user.id")
+      .where({ user_id: user.id })
+      .select("date.id", "date");
+
+    const mappedDates = dates.map((object) => {
+      const mapObj = {
+        id: object.id,
+        date: object.date,
+      };
+      return mapObj;
+    });
+    const completedUser = {
+      ...user,
+      groups: mappedGroups,
+      dates: mappedDates,
+    };
+
+    res.status(200).json(completedUser);
   } catch (error) {
     res.status(500).send({
       message: `Unable to retrieve user data for user ID: ${req.params.id}`,
@@ -80,9 +128,33 @@ const editUser = async (req, res) => {
   }
 };
 
+const createGroup = async (req, res) => {
+  try {
+    if (!req.body.name) {
+      return res.status(400).send("Please provide all required fields");
+    }
+    const groupToInsert = {
+      name: req.body.name,
+    };
+    const addGroup = await knex("group").insert(groupToInsert);
+
+    const userId = req.params.id;
+    // const newGroupId = addGroup[0];
+
+    console.log(addGroup);
+
+    await knex("group_user").insert({ user_id: userId, group_id: addGroup[0] });
+
+    res.json(groupToInsert);
+  } catch (error) {
+    res.json(error);
+  }
+};
+
 module.exports = {
   getUsers,
   getOneUser,
   createUser,
   editUser,
+  createGroup,
 };

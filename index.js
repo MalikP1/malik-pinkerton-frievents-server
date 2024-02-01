@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const dateRoutes = require("./routes/date-route");
-const groupRoutes = require("./routes/group-user-route");
+const groupRoutes = require("./routes/group-route");
 const eventRoutes = require("./routes/event-route");
 const userRoutes = require("./routes/user-route");
 const PORT = process.env.PORT || 5050;
@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
 
 app.use("/dates", dateRoutes);
 
-app.use("/group-user", groupRoutes);
+app.use("/groups", groupRoutes);
 
 app.use("/events", eventRoutes);
 

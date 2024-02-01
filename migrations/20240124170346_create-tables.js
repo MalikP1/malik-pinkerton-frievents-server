@@ -18,7 +18,7 @@ exports.up = function (knex) {
     .createTable("date", (table) => {
       table.increments("id").primary();
       table.date("date").notNullable();
-      table.integer("user_id").unsigned().references("user.id");
+      table.integer("user_id").unsigned().references("user.id").notNullable();
     })
     .createTable("group", (table) => {
       table.increments("id").primary();
@@ -29,9 +29,8 @@ exports.up = function (knex) {
         .defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"));
     })
     .createTable("group_user", (table) => {
-      table.increments("id").primary();
-      table.integer("group_id").unsigned().references("group.id");
-      table.integer("user_id").unsigned().references("user.id");
+      table.integer("group_id").unsigned().references("group.id").notNullable();
+      table.integer("user_id").unsigned().references("user.id").notNullable();
     })
     .createTable("event", (table) => {
       table.increments("id").primary();
@@ -39,7 +38,7 @@ exports.up = function (knex) {
       table.string("location").notNullable();
       table.time("time").notNullable();
       table.date("date").notNullable();
-      table.integer("group_id").unsigned().references("group.id");
+      table.integer("group_id").unsigned().references("group.id").notNullable();
       table.timestamp("created_at").defaultTo(knex.fn.now());
       table
         .timestamp("updated_at")
