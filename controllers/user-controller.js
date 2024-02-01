@@ -139,7 +139,6 @@ const createGroup = async (req, res) => {
     const addGroup = await knex("group").insert(groupToInsert);
 
     const userId = req.params.id;
-    // const newGroupId = addGroup[0];
 
     console.log(addGroup);
 
