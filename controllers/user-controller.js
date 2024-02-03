@@ -144,7 +144,7 @@ const createGroup = async (req, res) => {
 
     await knex("group_user").insert({ user_id: userId, group_id: addGroup[0] });
 
-    res.json(groupToInsert);
+    res.json(addGroup[0]);
   } catch (error) {
     res.json(error);
   }

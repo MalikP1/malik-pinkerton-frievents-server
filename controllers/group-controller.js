@@ -86,17 +86,18 @@ const addUsersToGroup = async (req, res) => {
   try {
     const groupId = req.params.id;
     const usersToAdd = req.body;
-    usersToAdd.forEach(async (userId) => {
+    console.log(req.body);
+    usersToAdd.user_id.forEach(async (userId) => {
       await knex("group_user").insert({ user_id: userId, group_id: groupId });
     });
 
     res
       .status(201)
       .send(
-        `Successfully added ${usersToAdd.length} users to group: ${groupId}`
+        `Successfully added ${usersToAdd.user_id.length} users to group: ${groupId}`
       );
   } catch (error) {
-    res.status(201).json({
+    res.status(404).json({
       message: `Unable to add users: ${error}`,
     });
   }
